@@ -23,6 +23,7 @@ export class SateliteService {
         longitudConst += 4;
         u.latitud = '-13.' + latitudconst;
         u.longitud = '-72.' + longitudConst;
+        u.date = new Date();
         u.temperature = await this.temperaturaAleatorio();
         const newSatellite = this.satelliteRepository.create(u);
         await this.satelliteRepository.save(newSatellite);
