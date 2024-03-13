@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InsertDto } from 'src/dto/insert.dto';
 import { updateTemperatureDto } from 'src/dto/updateTemperature.dto';
 import { SatelliteEntity } from 'src/entity/satellite.entity';
-import { Repository } from 'typeorm';
+import { LegacyOracleNamingStrategy, Repository } from 'typeorm';
 
 @Injectable()
 export class SateliteService {
@@ -11,23 +12,42 @@ export class SateliteService {
     private satelliteRepository: Repository<SatelliteEntity>
   ) {}
 
-  async CoordenadasAleatorias() {
+  async insertarCoordenadas(coord: InsertDto) {
     var u = new SatelliteEntity();
 
     try {
-      var latitudconst = 517352;
-      var longitudConst = 706941;
+      var latitud = coord.latitud;
+      var longitud = coord.longitud;
+      
+      u.date = new Date();
+      u.latitud = latitud;
+      u.longitud = longitud;
+      u.temperature = coord.temperature;
+      const newSatellite = this.satelliteRepository.create(u);
+      await this.satelliteRepository.save(newSatellite);
 
-      for (var i = 0; i < 73263; i++) {
-        latitudconst += 4;
-        longitudConst += 4;
-        u.latitud = '-13.' + latitudconst;
-        u.longitud = '-72.' + longitudConst;
+
+      for (var i = 0; i < 5; i++) {
         u.date = new Date();
+        latitud++;
+        u.latitud = latitud;
+        u.longitud = coord.longitud;
         u.temperature = await this.temperaturaAleatorio();
         const newSatellite = this.satelliteRepository.create(u);
         await this.satelliteRepository.save(newSatellite);
       }
+
+      
+      for (var i = 0; i < 5; i++) {
+        u.date = new Date();
+        longitud++;
+        u.latitud = coord.latitud;
+        u.longitud = longitud;
+        u.temperature = await this.temperaturaAleatorio();
+        const newSatellite = this.satelliteRepository.create(u);
+        await this.satelliteRepository.save(newSatellite);
+      }
+
       return 'termino';
     } catch (error) {
       return 'error' + error;
@@ -65,7 +85,11 @@ export class SateliteService {
     return {value: satellite};
   }
 
+  async getTest(){
+    return this.temperaturaAleatorio();
+  }
+
   async temperaturaAleatorio() {
-    return Math.random() * (40 - 10) + 10;
+    return Math.random() * (100 - 40) + 40;
   }
 }

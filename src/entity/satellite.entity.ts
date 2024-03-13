@@ -6,11 +6,11 @@ export class SatelliteEntity{
     @PrimaryGeneratedColumn()
     IdSatellite: number;
 
-    @Column()
-    latitud: string;
+    @Column({type: "double"})
+    latitud: number;
 
-    @Column()
-    longitud: string;
+    @Column({type: "double"})
+    longitud: number;
 
     @Column({type: "double"})
     temperature: number;
