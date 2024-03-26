@@ -29,6 +29,11 @@ export class SateliteController {
         return await this.sateliteService.getById(id);
     }
 
+    @Get('recentFires')
+    async getRecentFires(@Param('id') id: number){
+        return await this.sateliteService.getRecentFires();
+    }
+
     @Put('/update')
     async updateTemperature (@Body() data: updateTemperatureDto) {
         return await this.sateliteService.updateTemperature(data);

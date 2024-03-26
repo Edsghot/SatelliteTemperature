@@ -16,47 +16,33 @@ export class SateliteService {
     var u = new SatelliteEntity();
 
     try {
-      var latitud = coord.latitud;
-      var longitud = coord.longitud;
       
       u.date = new Date();
-      u.latitud = latitud;
-      u.longitud = longitud;
+      u.latitud = coord.latitud;
+      u.longitud = coord.longitud;
       u.temperature = coord.temperature;
       const newSatellite = this.satelliteRepository.create(u);
       await this.satelliteRepository.save(newSatellite);
 
-
-      for (var i = 0; i < 5; i++) {
-        u.date = new Date();
-        latitud++;
-        u.latitud = latitud;
-        u.longitud = coord.longitud;
-        u.temperature = await this.temperaturaAleatorio();
-        const newSatellite = this.satelliteRepository.create(u);
-        await this.satelliteRepository.save(newSatellite);
-      }
-
-      
-      for (var i = 0; i < 5; i++) {
-        u.date = new Date();
-        longitud++;
-        u.latitud = coord.latitud;
-        u.longitud = longitud;
-        u.temperature = await this.temperaturaAleatorio();
-        const newSatellite = this.satelliteRepository.create(u);
-        await this.satelliteRepository.save(newSatellite);
-      }
-
-      return 'termino';
+      return {msg:'se inserto correctamente',success: true};
     } catch (error) {
-      return 'error' + error;
+      return {msg:'error: ',detailMsg: error,sucess: false};
     }
   }
 
   async getConflagration(){
     var val = await this.satelliteRepository.query("CALL ps_Incendios()");
-    return {value: val[0]};
+    return {msg:"lista de incendios",value: val[0]};
+  }
+
+  async getRecentFires(){
+    try{
+      var val = await this.satelliteRepository.query("CALL SP_IncendioFechaReciente()");
+      return {msg:"lista de incendios recientes",value: val[0],sucess:true};
+    
+    }catch(e){
+      return {msg: "Error al consultar", detail: e,sucess:false}
+    }
   }
 
   async updateTemperature(data: updateTemperatureDto){
