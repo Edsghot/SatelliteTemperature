@@ -15,15 +15,15 @@ export class SateliteService {
     private satelliteForanRepository: Repository<SatelliteForanEntity>
   ) {}
 
-  async insertarCoordenadas(coord: InsertDto) {
+  async insertarCoordenadas(coordT: InsertDto) {
     var u = new SatelliteEntity();
     var n = new SatelliteForanEntity();
     try {
       
       u.date = new Date();
-      u.latitud = coord.latitud;
-      u.longitud = coord.longitud;
-      u.temperature = coord.temperature;
+      u.latitud = coordT.latitud;
+      u.longitud = coordT.longitud;
+      u.temperature = coordT.temperature;
       const newSatellite = this.satelliteRepository.create(u);
       await this.satelliteRepository.save(newSatellite);
   
@@ -39,6 +39,7 @@ export class SateliteService {
         const newSatelliteForan = this.satelliteForanRepository.create({
           latitud: coord.lat,
           longitud: coord.lng,
+          temperature: coordT.temperature,
           satelite: newSatellite, // Asigna el satélite principal
         });
         await this.satelliteForanRepository.save(newSatelliteForan);
@@ -71,7 +72,7 @@ export class SateliteService {
     return {msg:"lista de incendios",value: val[0]};
   }
   async getSatellite(){
-    var val = await this.satelliteRepository.query("CALL getSatellite()");
+    var val = await this.satelliteRepository.query("CALL getSatellites()");
     return {msg:"lista de incendios",value: val[0]};
   }
 

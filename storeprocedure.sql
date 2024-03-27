@@ -14,11 +14,11 @@ DELIMITER ;
 
 
 DELIMITER //
-CREATE PROCEDURE getSatellite()
+CREATE PROCEDURE getSatellites()
 BEGIN
     SELECT s.*, sf.*
     FROM Satellite s
     CROSS JOIN SatelliteForan sf
-    WHERE s.temperature > 40;
+    WHERE s.temperature > 40 and sf.temperature > 40;
 END //
 DELIMITER ;

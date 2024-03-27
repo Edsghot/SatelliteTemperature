@@ -13,6 +13,9 @@ export class SatelliteForanEntity{
     @Column({type: "float"})
     longitud: number;
 
+    @Column({type: "float"})
+    temperature: number;
+
     @ManyToOne(() => SatelliteEntity, satelite => satelite.sateliteForaneos)
     satelite: SatelliteEntity;
 }
