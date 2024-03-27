@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsertDto } from 'src/dto/insert.dto';
 import { updateTemperatureDto } from 'src/dto/updateTemperature.dto';
+import { SatelliteForanEntity } from 'src/entity/sateliteForan.entity';
 import { SatelliteEntity } from 'src/entity/satellite.entity';
 import { LegacyOracleNamingStrategy, Repository } from 'typeorm';
 
@@ -9,12 +10,14 @@ import { LegacyOracleNamingStrategy, Repository } from 'typeorm';
 export class SateliteService {
   constructor(
     @InjectRepository(SatelliteEntity)
-    private satelliteRepository: Repository<SatelliteEntity>
+    private satelliteRepository: Repository<SatelliteEntity>,
+    @InjectRepository(SatelliteForanEntity)
+    private satelliteForanRepository: Repository<SatelliteForanEntity>
   ) {}
 
   async insertarCoordenadas(coord: InsertDto) {
     var u = new SatelliteEntity();
-
+    var n = new SatelliteForanEntity();
     try {
       
       u.date = new Date();
@@ -23,15 +26,52 @@ export class SateliteService {
       u.temperature = coord.temperature;
       const newSatellite = this.satelliteRepository.create(u);
       await this.satelliteRepository.save(newSatellite);
-
+  
+      
+      const radius = 1000; // Radio en metros alrededor del satélite principal
+      const numPoints = 5; // Número de satélites secundarios
+      
+      const centerLat = u.latitud; // Latitud del satélite principal
+      const centerLng = u.longitud; // Longitud del satélite principal
+      const randomCoordinates = this.generateRandomCoordinates(centerLat, centerLng, radius, numPoints);
+      
+      for (const coord of randomCoordinates) {
+        const newSatelliteForan = this.satelliteForanRepository.create({
+          latitud: coord.lat,
+          longitud: coord.lng,
+          satelite: newSatellite, // Asigna el satélite principal
+        });
+        await this.satelliteForanRepository.save(newSatelliteForan);
+      }
+  
       return {msg:'se inserto correctamente',success: true};
     } catch (error) {
       return {msg:'error: ',detailMsg: error,sucess: false};
     }
   }
+  
+  generateRandomCoordinates(centerLat: number, centerLng: number, radius: number, numPoints: number): { lat: number, lng: number }[] {
+    const result = [];
+    const radiusInDegrees = radius / 111300; // Approximate conversion from meters to degrees
+  
+    for (let i = 0; i < numPoints; i++) {
+      const randomRadius = Math.random() * radiusInDegrees;
+      const randomAngle = Math.random() * 2 * Math.PI;
+      const lat = centerLat + randomRadius * Math.cos(randomAngle);
+      const lng = centerLng + randomRadius * Math.sin(randomAngle);
+      result.push({ lat, lng });
+    }
+  
+    return result;
+  }
+  
 
   async getConflagration(){
     var val = await this.satelliteRepository.query("CALL ps_Incendios()");
+    return {msg:"lista de incendios",value: val[0]};
+  }
+  async getSatellite(){
+    var val = await this.satelliteRepository.query("CALL getSatellite()");
     return {msg:"lista de incendios",value: val[0]};
   }
 

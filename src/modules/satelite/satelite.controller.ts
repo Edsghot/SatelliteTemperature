@@ -19,6 +19,11 @@ export class SateliteController {
         return await this.sateliteService.getConflagration();
     }
 
+    @Get('/getSatellite')
+    async getSatellite(){
+        return await this.sateliteService.getSatellite();
+    }
+
     @Get('/test')
     async test(){
         return await this.sateliteService.getTest();

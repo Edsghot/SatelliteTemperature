@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { SatelliteForanEntity } from "./sateliteForan.entity";
 
 @Entity({name: "Satellite"})
 export class SatelliteEntity{
@@ -6,15 +7,18 @@ export class SatelliteEntity{
     @PrimaryGeneratedColumn()
     IdSatellite: number;
 
-    @Column({type: "double"})
+    @Column({type: "float"})
     latitud: number;
 
-    @Column({type: "double"})
+    @Column({type: "float"})
     longitud: number;
 
-    @Column({type: "double"})
+    @Column({type: "float"})
     temperature: number;
 
     @Column()
     date: Date;
+
+    @OneToMany(() => SatelliteForanEntity, sateliteForaneos => sateliteForaneos.IdSatelliteForan)
+    sateliteForaneos: SatelliteForanEntity[];
 }
