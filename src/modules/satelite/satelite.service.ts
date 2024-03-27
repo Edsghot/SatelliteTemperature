@@ -29,7 +29,7 @@ export class SateliteService {
   
       
       const radius = 50; // Radio en metros alrededor del satélite principal
-      const numPoints = 10; // Número de satélites secundarios
+      const numPoints = 20; // Número de satélites secundarios
       
       const centerLat = u.latitud; // Latitud del satélite principal
       const centerLng = u.longitud; // Longitud del satélite principal
