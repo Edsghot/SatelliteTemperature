@@ -28,8 +28,8 @@ export class SateliteService {
       await this.satelliteRepository.save(newSatellite);
   
       
-      const radius = 100; // Radio en metros alrededor del satélite principal
-      const numPoints = 5; // Número de satélites secundarios
+      const radius = 50; // Radio en metros alrededor del satélite principal
+      const numPoints = 10; // Número de satélites secundarios
       
       const centerLat = u.latitud; // Latitud del satélite principal
       const centerLng = u.longitud; // Longitud del satélite principal
